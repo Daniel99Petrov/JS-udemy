@@ -26,4 +26,32 @@ const restaurant = {
       close: 24,
     },
   },
+
+  orderDeliver: function(obj) {
+    console.log(obj);
+  }
 };
+
+let [main, ,secondary] = restaurant.categories;
+[main, secondary] = [secondary, main];
+
+const {name, openingHours, categories} = restaurant;
+
+const {name: restaurantName, openingHours: hours, categories: tags} = restaurant;
+
+const {menu = [],starterMenu: starters = []} = restaurant;
+
+let a = 111;
+let b = 999;
+const obj = {a: 23, b:7, c:14}
+({a, b} = obj);
+
+
+const {fri: {open, close}} =openingHours;
+
+const newMenu = [...restaurant.mainMenu, `Gnocci`];
+
+//copy array
+const mainMenuCopy = [...restaurant.mainMenu];
+
+// const menu = [...restaurant.mainMenu, ...restaurant.starterMenu];
