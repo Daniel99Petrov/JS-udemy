@@ -68,7 +68,9 @@ const displayMovements = function (movements) {
     const type = move > 0 ? 'deposit' : 'withdrawal';
     const html = `
         <div class="movements__row">
-          <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
+          <div class="movements__type movements__type--${type}">${
+      i + 1
+    } ${type}</div>
           <div class="movements__value">${move}€</div>
         </div>
         `;
@@ -77,9 +79,9 @@ const displayMovements = function (movements) {
   });
 };
 
-const calcDisplayBalance = function (movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${balance} EUR`;
+const calcDisplayBalance = function (acc) {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${acc.balance} EUR`;
 };
 
 const calcDisplaySummary = function (acc) {
@@ -111,6 +113,12 @@ const createUsernames = function (accs) {
 };
 createUsernames(accounts);
 
+const updateUI = function (acc) {
+  displayMovements(currentAccount.movements);
+  calcDisplayBalance(currentAccount);
+  calcDisplaySummary(currentAccount);
+};
+
 let currentAccount;
 
 btnLogin.addEventListener('click', function (e) {
@@ -124,13 +132,41 @@ btnLogin.addEventListener('click', function (e) {
     containerApp.style.opacity = 100;
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
-    displayMovements(currentAccount.movements);
-    calcDisplayBalance(currentAccount.movements);
-    calcDisplaySummary(currentAccount);
+
+    updateUI(currentAccount);
 
     console.log('LOGIN');
   }
 });
+
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const transferTo = accounts.find(
+    acc => acc.username === inputTransferTo.value
+  );
+  
+  inputTransferAmount.value = inputTransferTo.value = '';
+
+  if (
+    amount > 0 &&
+    transferTo &&
+    currentAccount.balance >= amount &&
+    transferTo.username !== currentAccount.username
+  ) {
+    currentAccount.movements.push(-amount);
+    transferTo.movements.push(amount);
+
+    updateUI(currentAccount);
+  }
+});
+
+btnClose.addEventListener('click', function(e) {
+  e.preventDefault();
+  const accountIndex = accounts.findIndex(acc => acc.username === inputCloseUsername.value);
+  const accountPin = inputClosePin.value;
+  // ??
+})
 // const max = movements.reduce((acc,move) => move > acc ? acc = move : acc, movements[0])
 // console.log(max);
 // const deposits = movements.filter(function (mov) {
